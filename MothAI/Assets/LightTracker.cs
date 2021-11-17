@@ -59,11 +59,6 @@ public class LightTracker : MonoBehaviour
 
             light = lightValue;
 
-            if (isLightActive)
-            {
-                Debug.Log("Light value: " + lightValue);
-            }
-
             yield return new WaitForSeconds(updateTime);
         }
     }

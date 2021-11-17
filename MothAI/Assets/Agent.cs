@@ -13,6 +13,8 @@ public class Agent : MonoBehaviour
 
     public AnimationCurve enoughLight;
 
+    public float moveSpeed = 10;
+
     private float littleLightValue = 0.0f;
     private float someLightValue = 0.0f;
     private float enoughLightValue = 0.0f;
@@ -43,6 +45,10 @@ public class Agent : MonoBehaviour
                 break;
         }
 
+        if(littleLightValue >= 0.02f)
+        {
+            AS = agentState.STANDBY;
+        }
         //switch (FS)
         //{   
         //    case fuzzyStates.NO_LIGHT:
@@ -66,7 +72,8 @@ public class Agent : MonoBehaviour
 
     private IEnumerator MoveAgent()
     {
-        AC.Move(new Vector3(10, AC.transform.position.y, transform.position.z) * Time.deltaTime);
+        var moveDirection = transform.TransformDirection(Vector3.forward) * moveSpeed;
+        AC.Move(moveDirection * Time.deltaTime);
         yield return new WaitForEndOfFrame();
     }
 
