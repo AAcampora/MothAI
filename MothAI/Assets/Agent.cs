@@ -1,69 +1,78 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-
-/// <summary>
-/// Credit to the light detection technique to Tobias Filthaus
-/// </summary>
 public class Agent : MonoBehaviour
 {
+    public CharacterController AC;
 
-    public Camera camLightScan;
-    public bool isLightActive = false;
-    public float updateTime = 0.1f;
+    public AnimationCurve littleLight;
 
-    public static float lightValue;
+    public AnimationCurve someLight;
 
-    private const int textureSize = 1;
+    public AnimationCurve enoughLight;
 
-    private Texture2D textLight;
-    private RenderTexture texTemp;
-    private Rect rectLight;
-    private Color lightPixel;
+    private float littleLightValue = 0.0f;
+    private float someLightValue = 0.0f;
+    private float enoughLightValue = 0.0f;
 
-    // Start is called before the first frame update
-    void Start()
+    public enum agentState {STANDBY, MOVING, TURNING};
+
+    public agentState AS = agentState.MOVING;
+
+    public enum fuzzyStates { NO_LIGHT, NOT_ENOUGH_LIGHT, SOME_LIGHT, INLUMINATED}
+
+    public fuzzyStates FS = fuzzyStates.NO_LIGHT;
+
+    public LightTracker AT;
+
+    public void Update()
     {
-        textLight = new Texture2D(textureSize, textureSize, TextureFormat.RGB24, false);
-        texTemp = new RenderTexture(textureSize, textureSize, 24);
-        rectLight = new Rect(0f, 0f, textureSize, textureSize);
+        switch (AS)
+        {
+            case agentState.STANDBY:
+                break;
+            case agentState.MOVING:
+                StartCoroutine(MoveAgent());
+                break;
+            case agentState.TURNING:
+                StartCoroutine(RotateAgent());
+                break;
+            default:
+                break;
+        }
 
-        StartCoroutine(LightDetectionUpdate(updateTime));
+        //switch (FS)
+        //{   
+        //    case fuzzyStates.NO_LIGHT:
+        //        break;
+        //    case fuzzyStates.NOT_ENOUGH_LIGHT:
+        //        break;
+        //    case fuzzyStates.SOME_LIGHT:
+        //        break;
+        //    case fuzzyStates.INLUMINATED:
+        //        break;
+        //    default:
+        //        break;
+        //}
+
+        littleLightValue = littleLight.Evaluate(AT.light);
+        someLightValue = someLight.Evaluate(AT.light);
+        enoughLightValue = enoughLight.Evaluate(AT.light);
+
+        Debug.Log("little Light: " + littleLightValue + " some Light: " + someLightValue + " enough light: " + enoughLightValue);
     }
 
-    private IEnumerator LightDetectionUpdate(float updateTime)
+    private IEnumerator MoveAgent()
     {
-        while(true)
-        {
-            //set target texture of the camera
-            camLightScan.targetTexture = texTemp;
-            //read into the set target texture
-            camLightScan.Render();
+        AC.Move(new Vector3(10, AC.transform.position.y, transform.position.z) * Time.deltaTime);
+        yield return new WaitForEndOfFrame();
+    }
 
-            //set the target texture as the active rendered texture
-            RenderTexture.active = texTemp;
-
-            //read the current rendered texture
-            textLight.ReadPixels(rectLight, 0, 0);
-
-            //reset the active rendered texture
-            RenderTexture.active = null;
-
-            //reset target texture of the camera
-            camLightScan.targetTexture = null;
-
-            //read the pixel in the middle texture
-            lightPixel = textLight.GetPixel(textureSize / 2, textureSize / 2);
-
-            lightValue = (lightPixel.r + lightPixel.g + lightPixel.b) / 3f;
-
-            if(isLightActive)
-            {
-                Debug.Log("Light value: " + lightValue);
-            }
-
-            yield return new WaitForSeconds(updateTime);
-        }
+    private IEnumerator RotateAgent()
+    {
+        AC.transform.Rotate(Vector2.up * 1 * (100f * Time.deltaTime));
+        yield return new WaitForEndOfFrame();
     }
 }
