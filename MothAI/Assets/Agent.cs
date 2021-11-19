@@ -18,54 +18,47 @@ public class Agent : MonoBehaviour
     private float littleLightValue = 0.0f;
     private float someLightValue = 0.0f;
     private float enoughLightValue = 0.0f;
-
-    public enum agentState {STANDBY, MOVING, TURNING};
-
-    public agentState AS = agentState.MOVING;
-
-    public enum fuzzyStates { NO_LIGHT, NOT_ENOUGH_LIGHT, SOME_LIGHT, INLUMINATED}
+    public enum fuzzyStates { NO_LIGHT, NOT_ENOUGH_LIGHT, SOME_LIGHT, INLUMINATED }
 
     public fuzzyStates FS = fuzzyStates.NO_LIGHT;
 
     public LightTracker AT;
 
+    public float checkPointDir;
+
+    public bool isTuringRight = false;
+
+    FuzzyLight fuzzyLight;
+
+    private void Start()
+    {
+        //set the agent origin point direction, inverted to take the direction if the player turned back
+        checkPointDir = AC.transform.localEulerAngles.y - 180f;
+
+        littleLightValue = 0.0f;
+        someLightValue = 0.0f;
+        enoughLightValue = 0.0f;
+    }
+
     public void Update()
     {
-        switch (AS)
+        switch (FS)
         {
-            case agentState.STANDBY:
-                break;
-            case agentState.MOVING:
+            case fuzzyStates.NO_LIGHT:
+
                 StartCoroutine(MoveAgent());
                 break;
-            case agentState.TURNING:
-                StartCoroutine(RotateAgent());
+            case fuzzyStates.NOT_ENOUGH_LIGHT:
+                break;
+            case fuzzyStates.SOME_LIGHT:
+                break;
+            case fuzzyStates.INLUMINATED:
                 break;
             default:
                 break;
         }
 
-        if(littleLightValue >= 0.02f)
-        {
-            AS = agentState.STANDBY;
-        }
-        //switch (FS)
-        //{   
-        //    case fuzzyStates.NO_LIGHT:
-        //        break;
-        //    case fuzzyStates.NOT_ENOUGH_LIGHT:
-        //        break;
-        //    case fuzzyStates.SOME_LIGHT:
-        //        break;
-        //    case fuzzyStates.INLUMINATED:
-        //        break;
-        //    default:
-        //        break;
-        //}
-
-        littleLightValue = littleLight.Evaluate(AT.light);
-        someLightValue = someLight.Evaluate(AT.light);
-        enoughLightValue = enoughLight.Evaluate(AT.light);
+        EvalutateLightIntensity();
 
         Debug.Log("little Light: " + littleLightValue + " some Light: " + someLightValue + " enough light: " + enoughLightValue);
     }
@@ -74,12 +67,58 @@ public class Agent : MonoBehaviour
     {
         var moveDirection = transform.TransformDirection(Vector3.forward) * moveSpeed;
         AC.Move(moveDirection * Time.deltaTime);
+
+        if (littleLightValue >= 0.02 && someLightValue >= 0.4)
+        {
+            FS = fuzzyStates.SOME_LIGHT;
+            Debug.Log("Light Found");
+        }
         yield return new WaitForEndOfFrame();
     }
 
     private IEnumerator RotateAgent()
     {
-        AC.transform.Rotate(Vector2.up * 1 * (100f * Time.deltaTime));
+        var clampedDir = checkPointDir - 90.0f;
+        clampedDir = -clampedDir;
+
+        if (AC.transform.localEulerAngles.y <= clampedDir && !isTuringRight)
+        {
+            ClampedRotation(checkPointDir);
+            if (AC.transform.localEulerAngles.y >= clampedDir && !isTuringRight)
+            {
+                SwitchDirection(clampedDir, 175, true);
+            }
+        }
+        if (AC.transform.localEulerAngles.y <= clampedDir && isTuringRight)
+        {
+            ClampedRotation(-checkPointDir);
+            if (AC.transform.localEulerAngles.y >= clampedDir && isTuringRight)
+            {
+                SwitchDirection(clampedDir, 5, false);
+            }
+        }
+
         yield return new WaitForEndOfFrame();
+    }
+
+    void ClampedRotation(float dir)
+    {
+        AC.transform.Rotate(0, dir * Time.deltaTime, 0);
+    }
+
+    void SwitchDirection(float clampedDir, float offset, bool isRotatingRight)
+    {
+        AC.transform.localEulerAngles = new Vector3(AC.transform.localEulerAngles.x, clampedDir - offset,
+               AC.transform.localEulerAngles.z);
+        isTuringRight = isRotatingRight;
+    }
+
+    FuzzyLight EvalutateLightIntensity()
+    {
+        littleLightValue = littleLight.Evaluate(AT.light);
+        someLightValue = someLight.Evaluate(AT.light);
+        enoughLightValue = enoughLight.Evaluate(AT.light);
+        fuzzyLight = new FuzzyLight(littleLightValue, someLightValue, enoughLightValue);
+        return fuzzyLight;
     }
 }

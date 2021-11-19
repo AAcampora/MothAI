@@ -167,7 +167,6 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -296,13 +295,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 32, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &1290080606
 GameObject:
   m_ObjectHideFlags: 0
@@ -365,19 +364,19 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0.2
+      time: 0.3
       value: 0
-      inSlope: 5
-      outSlope: 5
+      inSlope: 5.0000005
+      outSlope: 5.0000005
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.4
+      time: 0.5
       value: 1
-      inSlope: 5
-      outSlope: -2.5
+      inSlope: 5.0000005
+      outSlope: -3.3333333
       tangentMode: 69
       weightedMode: 0
       inWeight: 0.33333334
@@ -385,8 +384,8 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0.8
       value: 0
-      inSlope: -2.5
-      outSlope: -2.5
+      inSlope: -3.3333333
+      outSlope: -3.3333333
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -419,9 +418,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   moveSpeed: 10
-  AS: 0
   FS: 0
   AT: {fileID: 1651888646}
+  checkPointDir: 0
+  isTuringRight: 0
 --- !u!136 &1290080608
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -447,7 +447,6 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -493,15 +492,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1290080606}
-  m_LocalRotation: {x: -0, y: 0.71117777, z: -0, w: 0.7030122}
-  m_LocalPosition: {x: -25.89, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: 0.70270336, z: -0, w: 0.71148294}
+  m_LocalPosition: {x: -28.96, y: 0, z: 5.16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1651888645}
   - {fileID: 2129666733}
   m_Father: {fileID: 0}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 90.662, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 89.289, z: 0}
 --- !u!143 &1290080612
 CharacterController:
   m_ObjectHideFlags: 0
@@ -581,7 +580,6 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -660,7 +658,7 @@ Camera:
   m_GameObject: {fileID: 1902668245}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 4
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -676,7 +674,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 8
+  field of view: 5
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -691,7 +689,7 @@ Camera:
   m_AllowMSAA: 1
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
+  m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
 --- !u!1 &1958060731
@@ -723,10 +721,10 @@ Light:
   m_Type: 0
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 5.32
+  m_Intensity: 2.19
   m_Range: 20.11299
-  m_SpotAngle: 93
-  m_InnerSpotAngle: 21.80208
+  m_SpotAngle: 98
+  m_InnerSpotAngle: 1
   m_CookieSize: 10
   m_Shadows:
     m_Type: 0
@@ -830,7 +828,6 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
