@@ -418,10 +418,12 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   moveSpeed: 10
+  moveDuration: 3
   FS: 0
   AT: {fileID: 1651888646}
   checkPointDir: 0
   isTuringRight: 0
+  isMoving: 1
 --- !u!136 &1290080608
 CapsuleCollider:
   m_ObjectHideFlags: 0

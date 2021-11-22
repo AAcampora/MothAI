@@ -15,6 +15,9 @@ public class Agent : MonoBehaviour
 
     public float moveSpeed = 10;
 
+    public float moveDuration = 1.0f;
+
+    float elaspedTime = 0.0f;
     private float littleLightValue = 0.0f;
     private float someLightValue = 0.0f;
     private float enoughLightValue = 0.0f;
@@ -28,6 +31,7 @@ public class Agent : MonoBehaviour
 
     public bool isTuringRight = false;
 
+    public bool isMoving = false;
     FuzzyLight fuzzyLight;
 
     private void Start()
@@ -46,7 +50,11 @@ public class Agent : MonoBehaviour
         {
             case fuzzyStates.NO_LIGHT:
 
-                StartCoroutine(MoveAgent());
+                if (isMoving)
+                {
+                    StartCoroutine(LightFinding());
+                }
+
                 break;
             case fuzzyStates.NOT_ENOUGH_LIGHT:
                 break;
@@ -63,18 +71,18 @@ public class Agent : MonoBehaviour
         Debug.Log("little Light: " + littleLightValue + " some Light: " + someLightValue + " enough light: " + enoughLightValue);
     }
 
-    private IEnumerator MoveAgent()
-    {
-        var moveDirection = transform.TransformDirection(Vector3.forward) * moveSpeed;
-        AC.Move(moveDirection * Time.deltaTime);
+    //private IEnumerator MoveAgent()
+    //{
+    //    var moveDirection = transform.TransformDirection(Vector3.forward) * moveSpeed;
+    //    AC.Move(moveDirection * Time.deltaTime);
 
-        if (littleLightValue >= 0.02 && someLightValue >= 0.4)
-        {
-            FS = fuzzyStates.SOME_LIGHT;
-            Debug.Log("Light Found");
-        }
-        yield return new WaitForEndOfFrame();
-    }
+    //    if (littleLightValue >= 0.02 && someLightValue >= 0.4)
+    //    {
+    //        FS = fuzzyStates.SOME_LIGHT;
+    //        Debug.Log("Light Found");
+    //    }
+    //    yield return new WaitForEndOfFrame();
+    //}
 
     private IEnumerator RotateAgent()
     {
@@ -120,5 +128,18 @@ public class Agent : MonoBehaviour
         enoughLightValue = enoughLight.Evaluate(AT.light);
         fuzzyLight = new FuzzyLight(littleLightValue, someLightValue, enoughLightValue);
         return fuzzyLight;
+    }
+
+    private IEnumerator LightFinding()
+    {
+        var moveDirection = transform.TransformDirection(Vector3.forward) * moveSpeed;
+        AC.Move(moveDirection * Time.deltaTime);
+        elaspedTime += Time.deltaTime;
+        if (moveDuration < elaspedTime)
+        {
+            isMoving = false;
+            StopAllCoroutines();
+        }
+        yield return null;
     }
 }
